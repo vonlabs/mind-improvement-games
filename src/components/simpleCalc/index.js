@@ -1,42 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import StyledBoardButton from '../StyledBoardButton'
-import {Container, GameButton, GameRow, GameTable, ButtonsContainer} from './styledComponents'
+import React, { useState } from 'react';
+import Button from '@material-ui/core/Button'
+import {Container, GameButton, GameRow, GameTable} from './styledComponents'
 import {createRandomArray} from './functions'
-import { Typography } from '@material-ui/core';
-import { Button } from '@material-ui/core';
+import ButtonNumber from '../ButtonNumber'
+import ButtonGamePlay from '../ButtonGamePlay'
+
+
+const size = {height: 12,
+                width: 12};
 
 export default function GroupSizesColors() {
-  const [chosenSize, setChosenSize] = useState({height: 1, width: 2});
+  const [highlightArray, setHighlightArray] = useState(mapHighlightArray(size));
+  const [chosenSize, setChosenSize] = useState({height: 0, width: 0});
   const [lastGoodButton, setLastGoodButton] = useState(0);
-  const [arrayOfnumbers, setArrayOfnumbers] = useState(createRandomArray(chosenSize));
+  const [arrayOfnumbers, setArrayOfnumbers] = useState([]);
   const [wellPressedArray, setWellPressedArray] = useState([]);
-  const [gameStarted, setGameStarted] = useState(false);
-  const [gameFinished, setGameFinished] = useState(false);
-  const [seconds, setSeconds] = useState(0);
-  const [startedAtTime, setStartedAtTime] = useState(0);
-  const [isActive, setIsActive] = useState(false);
+  const [finishedGame, setFinishedGame] = useState(false);
+  const [wrongNumber, setWrongNumber] = useState([]);
 
-  function toggleTimer() {
-    setIsActive(!isActive);
-  }
 
-  function resetTimer() {
-    setSeconds(0);
-    setIsActive(false);
-  }
 
-  useEffect(() => {
-    let interval = null;
-    if (isActive) {
-      interval = setInterval(() => {
-        setSeconds(seconds => seconds + 1);
-      }, 1000);
-    } else if (!isActive && seconds !== 0) {
-      clearInterval(interval);
+  function renderChooseSize (size) {
+    let wholeTable = [];
+        for (let height=0; height < size.height; height++) {
+            let row = [];
+            for (let width=0; width < size.width; width++) {
+                row.push(<GameButton
+                    highlight={highlightArray[height][width] ? true : false}
+                    onMouseEnter={() => setHighlightArray(mapHighlightArray(size,height,width))}
+                    onClick={() => {setChosenSize({height, width});
+                                    setArrayOfnumbers(createRandomArray({height, width}));}}
+                >
+                </GameButton>);
+            }
+            wholeTable.push(<GameRow>{row}</GameRow>);
+        }   
+        return wholeTable
     }
-    return () => clearInterval(interval);
-  }, [isActive, seconds]);
 
+    function mapHighlightArray (size,height,width){
+        let wholeTable = [];
+        for (let i=0; i < size.height; i++) {
+            let row = [];
+            for (let j=0; j < size.width; j++) {
+                row.push(i <= height && j <= width ? true : false);
+            }
+            wholeTable.push(row);
+        }   
+        return wholeTable
+    }
 
     function mapWellPressedArray (chosenSize,height,width,oldArray){
         let newArray = [];
@@ -52,6 +64,14 @@ export default function GroupSizesColors() {
         return newArray
     }
 
+    function renderGameBoardChoice (){
+        return <GameTable
+                    onMouseLeave={() => setHighlightArray(mapHighlightArray(size))}
+                >
+                    {renderChooseSize(size)}
+                </GameTable>
+    }
+
     function renderGameBoard (){
         let wholeTable = [];
         for (let height=0; height <= chosenSize.height; height++) {
@@ -59,12 +79,12 @@ export default function GroupSizesColors() {
             for (let width=0; width <= chosenSize.width; width++) {
                 let number = arrayOfnumbers[(height*(chosenSize.width+1))+width];
                 let marked = wellPressedArray && wellPressedArray[height] && wellPressedArray[height][width];
-                row.push(<StyledBoardButton
+                row.push(<ButtonNumber
                             marked={marked}
                             onClick={()=> !marked && checkForGoodButton(chosenSize, number, height, width)}
                         >
                         {number}
-                        </StyledBoardButton>);
+                        </ButtonNumber>);
                 }
             wholeTable.push(<GameRow>{row}</GameRow>);
         }   
@@ -77,87 +97,44 @@ export default function GroupSizesColors() {
         if (lastGoodButton + 1 === number) {
             setWellPressedArray(mapWellPressedArray(chosenSize, height, width, wellPressedArray));
             setLastGoodButton(number)
-            if (isActive && number === ((chosenSize.height+1) * (chosenSize.width+1))){
-                finishGame();
+            if (number === ((chosenSize.height+1) * (chosenSize.width+1))){
+                setFinishedGame(true)
             }
         }
         else return console.log('not ok')
     }
 
+
     function theGame () {
-        console.log('theGame');
-        if (gameStarted){
+        if (chosenSize.height === 0 && chosenSize.width === 0) {
+            return renderGameBoardChoice()
+        } else if (!finishedGame){
             return renderGameBoard()
         } 
-        return startScreen();
-    }
-
-    function startScreen () {
-        console.log('startScreen');
-        return  <Container> 
-                    <Typography>
-                        Gra w której celem jest jak najszybsze zaznaczenie wszyskich liczb w kolejności od najmniejsze do największej.<br/>
-                        Demo poniżej :)
-                    </Typography> 
-                    {renderGameBoard()}
-                </Container>
+        else if (finishedGame){
+            console.log('fnishshed');
+            return renderGameBoard();
+        } 
     }
 
     function resetGame() {
-        setChosenSize({height: 1, width: 2});
+        setHighlightArray(mapHighlightArray(size));
+        setChosenSize({height: 0, width: 0});
         setLastGoodButton(0);
-        setArrayOfnumbers(createRandomArray({height: 1, width: 2}));
+        setArrayOfnumbers([]);
         setWellPressedArray([]);
-        setGameStarted(false);
-        setGameFinished(false);
-        resetTimer();
+        setFinishedGame(false);
     }
-
-    function startGame() {
-        let newSize = {height: 2, width: 2}
-        let time = Date.now();
-        setChosenSize(newSize);
-        setLastGoodButton(0);
-        setArrayOfnumbers(createRandomArray(newSize));
-        setWellPressedArray([]);
-        setGameStarted(true);
-        setGameFinished(false);
-        setStartedAtTime(time)
-        toggleTimer();
-    }
-
-    function finishGame(){
-        let time = Date.now()-startedAtTime;
-        setStartedAtTime(time);
-        alert(`Finished at ${time}s`)
-        setGameFinished(true);
-        setIsActive(false);
-    }
-
 
   return (
     <Container>
-        <ButtonsContainer>
-            <Button 
-                variant="outlined" 
-                color="primary"
-                onClick={()=>startGame()}
-                disabled={gameStarted}
-            >
-                Start Game
-            </Button>
-            <Button 
-                variant="outlined" 
-                color="primary"
-                onClick={()=>resetGame()}
-                disabled={!gameStarted}
-            >
-                End Game
-            </Button>
-            <Typography>
-                Czas: {seconds} s.
-            </Typography> 
-        </ButtonsContainer>
+        <ButtonGamePlay 
+            variant="outlined" 
+            color="primary"
+            onClick={()=>resetGame()}
+        >
+            Reset Game
+        </ButtonGamePlay>
         {theGame()}        
     </Container>
   );
