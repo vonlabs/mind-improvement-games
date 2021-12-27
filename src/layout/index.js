@@ -4,7 +4,7 @@ import {Container, GameButton, Title, ButtonsContainer, FAB} from './styledCompo
 
 
 export default function Layout(props) {
-  const [game, setGame] = useState(1);
+  const [game, setGame] = useState(-1);
   return (
     <Container>
          {  

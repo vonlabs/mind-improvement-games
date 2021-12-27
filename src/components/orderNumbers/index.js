@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import StyledBoardButton from '../StyledBoardButton'
+import StyledBoardButton from './styledBoardButton.js'
 import { GameContainer, GameRow, GameTable } from './styledComponents'
 import { GameStateButton, ButtonsContainer, Timer } from '../shared/styledComponents'
-import {createRandomArray} from './functions'
+import { createRandomArray } from './functions'
 import { Typography } from '@material-ui/core';
-import { Button } from '@material-ui/core';
 
 export default function OrderNumbers() {
   const [chosenSize, setChosenSize] = useState({height: 1, width: 2});

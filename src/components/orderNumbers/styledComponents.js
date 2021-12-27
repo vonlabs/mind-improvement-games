@@ -97,7 +97,7 @@ export const Button = styled.button`
       transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1), cubic-bezier(0.4, 0, 0.2, 1), cubic-bezier(0.4, 0, 0.2, 1);
       user-select:none;
       vertical-align:middle;
-      width:95.0781px;
+      width:95px;
       word-spacing:0px;
       writing-mode:horizontal-tb;
       -webkit-appearance:none;

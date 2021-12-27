@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { GameContainer, ButtonsContainer, Timer, AnswerButtonGroup, AnswerButton } from './styledComponents'
-import { GameStateButton } from '../shared/styledComponents'
+import { GameContainer, AnswerButtonGroup, AnswerButton } from './styledComponents'
+import { GameStateButton, ButtonsContainer, Timer } from '../shared/styledComponents'
 import { Typography } from '@material-ui/core';
 
 const timer = 10000;
