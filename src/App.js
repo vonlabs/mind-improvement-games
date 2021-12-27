@@ -1,15 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { StylesProvider  } from '@material-ui/core/styles';
+
 import GroupSizesColors from './components/simpleCalc/index'
-import CountingGame from './components/countingGame/index'
+import FastCounting from './components/fastCounting/index'
+import Layout from './layout/index'
+
+
+const games = [
+  {name: 'Fast Counting', game: <FastCounting/>},
+  {name: 'Order Numbers', game: <GroupSizesColors/>},
+]
 
 function App() {
   return (
-    <div className="App">
-      <GroupSizesColors/>
-      <CountingGame/>
-    </div>
+    <StylesProvider  injectFirst>
+      <Layout
+        games={games}
+      />
+    </StylesProvider >
   );
 }
 

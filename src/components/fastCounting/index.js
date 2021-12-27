@@ -136,7 +136,7 @@ export default function GroupSizesColors() {
                 {isTimerActive ? 'End Game' : 'Reset Game'}
             </Button>
             <Typography>
-                Pozostały czas: {(miliSeconds/1000).toFixed(parseInt(3))} s.
+                Time left: {(miliSeconds/1000).toFixed(parseInt(3))} s.
             </Typography> 
         </ButtonsContainer>
         <Container>
