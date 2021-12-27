@@ -1,45 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import StyledBoardButton from '../StyledBoardButton'
-import {Container, GameButton, GameRow, GameTable, ButtonsContainer} from './styledComponents'
+import { GameContainer, ButtonsContainer, GameStateButton, Timer, AnswerButtonGroup, AnswerButton } from './styledComponents'
 import { Typography } from '@material-ui/core';
-import { Button, ButtonGroup } from '@material-ui/core';
 
 const timer = 10000;
 const timerInterval = 25;
 const digitsFromTo = [2,9];
 const numberOfAnswers = 4;
 
+const calculationObjectInitial = {first: null, second: null, calc: null, answers: {answersArray: []}};
 const answerStatsInitial = {good: 0, done: 0};
 
 export default function GroupSizesColors() {
-  const [calculationObject, setCalculationObject] = useState({first: null, second: null, calc: null, answers: {answersArray: []}});
+  const [calculationObject, setCalculationObject] = useState(calculationObjectInitial);
   const [answerStats, setAnswersStats] = useState(answerStatsInitial);
   const [gameStarted, setGameStarted] = useState(false);
-  const [gameFinished, setGameFinished] = useState(false);
   const [miliSeconds, setMiliSeconds] = useState(timer);
   const [isTimerActive, setIsTimerActive] = useState(false);
 
-    function toggleTimer() {
-        setIsTimerActive(!isTimerActive);
-    }
-
-    function resetTimer() {
-        setIsTimerActive(false);
-        setMiliSeconds(timer);
-    }
-
     useEffect(() => {
-    let interval = null;
-    if (isTimerActive && miliSeconds !== 0) {
-        interval = setInterval(() => {
-            setMiliSeconds(miliSeconds => miliSeconds - timerInterval);
-        }, timerInterval);
-    } else if (isTimerActive && miliSeconds == 0) {
-        finishedTimeAndGame();
-    } else if (!isTimerActive) {
-        clearInterval(interval);
-    }
-    return () => clearInterval(interval);
+        let interval = null;
+        if (isTimerActive && miliSeconds !== 0) {
+            interval = setInterval(() => {
+                setMiliSeconds(miliSeconds => miliSeconds - timerInterval);
+            }, timerInterval);
+        } else if (isTimerActive && miliSeconds == 0) {
+            endGame();
+        } else if (!isTimerActive) {
+            clearInterval(interval);
+        }
+        return () => clearInterval(interval);
     }, [isTimerActive, miliSeconds]);
 
     function randomDigit(){
@@ -94,65 +83,97 @@ export default function GroupSizesColors() {
         return calculationObject;
     }
     
+    function toggleTimer() {
+        setIsTimerActive(!isTimerActive);
+    }
+
+    function resetTimer() {
+        setMiliSeconds(timer);
+    }
+
+    function stopTimer() {
+        setIsTimerActive(false);
+    }
+    
 
     function startGame() {
         setGameStarted(true);
-        setGameFinished(false);
         theCalculation();
         toggleTimer();
     };
 
-    function resetGame() {
+    function endGame() {
         setGameStarted(false);
-        setGameFinished(false);
+        stopTimer();
+        setCalculationObject(calculationObjectInitial);
+    };
+
+    function resetGame() {
         setAnswersStats(answerStatsInitial)
         resetTimer();
     };
 
-    function finishedTimeAndGame(){
-        setGameFinished(true);
-        setIsTimerActive(false);
-        alert(`Finished`);
-    };
-
-
   return (
-    <Container>
+    <GameContainer>
         <ButtonsContainer>
-            <Button 
+            <GameStateButton 
                 variant="outlined" 
                 color="primary"
                 onClick={()=>startGame()}
-                disabled={gameStarted}
+                disabled={gameStarted || answerStats.done !== 0}
             >
                 Start Game
-            </Button>
-            <Button 
-                variant="outlined" 
-                color="primary"
-                onClick={()=>resetGame()}
-                disabled={!gameStarted}
-            >
-                {isTimerActive ? 'End Game' : 'Reset Game'}
-            </Button>
-            <Typography>
-                Time left: {(miliSeconds/1000).toFixed(parseInt(3))} s.
-            </Typography> 
+            </GameStateButton>
+            {
+                isTimerActive ?
+                <GameStateButton 
+                    variant="outlined" 
+                    color="primary"
+                    onClick={()=>endGame()}
+                    disabled={!gameStarted}
+                >
+                    End Game
+                </GameStateButton>
+                :
+                <GameStateButton 
+                    variant="outlined" 
+                    color="primary"
+                    onClick={()=>resetGame()}
+                >
+                    Reset Game
+                </GameStateButton>
+            }
+            <Timer>
+                <Typography>
+                    Time left:
+                </Typography> 
+                <Typography>
+                    {(miliSeconds/1000).toFixed(parseInt(3))} s.
+                </Typography> 
+            </Timer>
         </ButtonsContainer>
-        <Container>
-            <Typography>{calculationObject.first} {calculationObject.calc} {calculationObject.second} =</Typography>
-            <ButtonGroup color="primary" aria-label="outlined primary button group">
+        <GameContainer>
+            <Typography>{calculationObject.first} {calculationObject.calc} {calculationObject.second} {calculationObject.second && '='}</Typography>
+            <AnswerButtonGroup color="primary" aria-label="outlined primary button group">
                 {
                     calculationObject.answers.answersArray.map((elem,index) => 
-                        <Button
+                        <AnswerButton
                             onClick={()=>answerCalculation(calculationObject,index)}
                             disabled={!isTimerActive}
                         >
                             {elem}
-                        </Button>)
+                        </AnswerButton>)
                 }
-            </ButtonGroup>
-        </Container>
-    </Container>
+            </AnswerButtonGroup>
+        </GameContainer>
+        {
+            (!gameStarted && (answerStats.done !== 0)) &&
+            <GameContainer>
+                <Typography>Good answers: {answerStats.good} </Typography>
+                <Typography>All answers: {answerStats.done}</Typography>
+                <Typography>Score: {parseInt(answerStats.good / answerStats.done * 100)}%</Typography>
+            </GameContainer>
+        }
+    </GameContainer>
   );
 }

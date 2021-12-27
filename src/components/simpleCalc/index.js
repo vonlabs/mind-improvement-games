@@ -62,15 +62,16 @@ export default function GroupSizesColors() {
                 row.push(<StyledBoardButton
                             marked={marked}
                             onClick={()=> !marked && checkForGoodButton(chosenSize, number, height, width)}
+                            key={`gameBoard_number_${height}_${width}`}
                         >
-                        {number}
+                            {number}
                         </StyledBoardButton>);
                 }
-            wholeTable.push(<GameRow>{row}</GameRow>);
+            wholeTable.push(<GameRow key={`gameBoard_row_number_${height}`}>{row}</GameRow>);
         }   
         return <GameTable>
                     {wholeTable}
-                </GameTable>
+               </GameTable>
     };
 
     function checkForGoodButton (chosenSize, number, height, width) {
@@ -139,6 +140,8 @@ export default function GroupSizesColors() {
     <Container>
         <ButtonsContainer>
             <Button 
+                key='order-numbers-start'
+                id='order-numbers-start'
                 variant="outlined" 
                 color="primary"
                 onClick={()=>startGame()}
@@ -147,6 +150,8 @@ export default function GroupSizesColors() {
                 Start Game
             </Button>
             <Button 
+                key='order-numbers-reset'
+                id='order-numbers-reset'
                 variant="outlined" 
                 color="primary"
                 onClick={()=>resetGame()}
