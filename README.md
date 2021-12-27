@@ -6,6 +6,15 @@ It was created using React, Material-UI, Styled Components and plain JavaScript.
 
 http://mindgames.jadach.net
 
+## Games:
+###  `Fast Counting`
+![alt text](./readme-images/fast-counting.jpg)
+
+###  `Order Numbers`
+![alt text](./readme-images/order-numbers.jpg)
+
+
+
 ## Available Scripts
 
 In the project directory, you can run:

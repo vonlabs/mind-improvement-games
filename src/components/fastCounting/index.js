@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { GameContainer, ButtonsContainer, GameStateButton, Timer, AnswerButtonGroup, AnswerButton } from './styledComponents'
+import { GameContainer, ButtonsContainer, Timer, AnswerButtonGroup, AnswerButton } from './styledComponents'
+import { GameStateButton } from '../shared/styledComponents'
 import { Typography } from '@material-ui/core';
 
 const timer = 10000;
@@ -23,7 +24,7 @@ export default function GroupSizesColors() {
             interval = setInterval(() => {
                 setMiliSeconds(miliSeconds => miliSeconds - timerInterval);
             }, timerInterval);
-        } else if (isTimerActive && miliSeconds == 0) {
+        } else if (isTimerActive && miliSeconds === 0) {
             endGame();
         } else if (!isTimerActive) {
             clearInterval(interval);

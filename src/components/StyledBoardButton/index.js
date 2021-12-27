@@ -6,7 +6,8 @@ const useStyles = makeStyles({
   root: {
     height: 68,
     width: 68,
-    border: '1px solid rgba(144, 202, 249, 0.5)',
+    borderBottom: '1px solid rgba(144, 202, 249, 0.5)',
+    borderLeft: '1px solid rgba(144, 202, 249, 0.5)',
     margin: 0,
     borderRadius: 0,
   },
@@ -16,10 +17,22 @@ const useStyles = makeStyles({
       backgroundColor: 'rgba(10, 216, 74, 0.67);',
     }
   },
+  lastButton: {
+    borderRight: '1px solid rgba(144, 202, 249, 0.5)',
+  },
+  firstRow: {
+    borderTop: '1px solid rgba(144, 202, 249, 0.5)',
+  },
 });
 
 export default function StyledBoardButton(props) {
   const classes = useStyles();
-return <Button {...props} 
-                className={[props.className, classes.root, props.marked && classes.marked ].join(' ')}></Button>;
+  return <Button {...props} 
+                className={[
+                  props.className,
+                  classes.root, 
+                  props.marked && classes.marked, 
+                  props.lastButton && classes.lastButton,
+                  props.firstRow && classes.firstRow
+                ].join(' ')}></Button>;
 }

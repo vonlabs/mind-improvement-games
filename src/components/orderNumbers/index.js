@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import StyledBoardButton from '../StyledBoardButton'
-import {Container, GameButton, GameRow, GameTable, ButtonsContainer} from './styledComponents'
+import { GameContainer, GameRow, GameTable } from './styledComponents'
+import { GameStateButton, ButtonsContainer, Timer } from '../shared/styledComponents'
 import {createRandomArray} from './functions'
 import { Typography } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 
-export default function GroupSizesColors() {
+export default function OrderNumbers() {
   const [chosenSize, setChosenSize] = useState({height: 1, width: 2});
   const [lastGoodButton, setLastGoodButton] = useState(0);
   const [arrayOfnumbers, setArrayOfnumbers] = useState(createRandomArray(chosenSize));
@@ -60,14 +61,23 @@ export default function GroupSizesColors() {
                 let number = arrayOfnumbers[(height*(chosenSize.width+1))+width];
                 let marked = wellPressedArray && wellPressedArray[height] && wellPressedArray[height][width];
                 row.push(<StyledBoardButton
-                            marked={marked}
-                            onClick={()=> !marked && checkForGoodButton(chosenSize, number, height, width)}
                             key={`gameBoard_number_${height}_${width}`}
+                            id={`gameBoard_number_${height}_${width}`}
+                            className='gameButton'
+                            marked={marked}
+                            lastButton={chosenSize.width === width}
+                            firstRow={height === 0}
+                            onClick={()=> !marked && checkForGoodButton(chosenSize, number, height, width)}
                         >
                             {number}
                         </StyledBoardButton>);
                 }
-            wholeTable.push(<GameRow key={`gameBoard_row_number_${height}`}>{row}</GameRow>);
+            wholeTable.push(
+                <GameRow 
+                    key={`gameBoard_row_number_${height}`}
+                >
+                    {row}
+                </GameRow>);
         }   
         return <GameTable>
                     {wholeTable}
@@ -95,13 +105,13 @@ export default function GroupSizesColors() {
 
     function startScreen () {
         console.log('startScreen');
-        return  <Container> 
+        return  <GameContainer> 
                     <Typography>
-                        Gra w której celem jest jak najszybsze zaznaczenie wszyskich liczb w kolejności od najmniejsze do największej.<br/>
-                        Demo poniżej :)
+                        In this game, you have to click the numbers from lowest<br/>to the highest as fast as possible.<br/><br/>
+                        Before starting you can test your skills using this demo:
                     </Typography> 
                     {renderGameBoard()}
-                </Container>
+                </GameContainer>
     }
 
     function resetGame() {
@@ -115,7 +125,7 @@ export default function GroupSizesColors() {
     }
 
     function startGame() {
-        let newSize = {height: 2, width: 2}
+        let newSize = {height: 4, width: 4}
         let time = Date.now();
         setChosenSize(newSize);
         setLastGoodButton(0);
@@ -130,16 +140,15 @@ export default function GroupSizesColors() {
     function finishGame(){
         let time = Date.now()-startedAtTime;
         setStartedAtTime(time);
-        alert(`Finished at ${time}s`)
         setGameFinished(true);
         setIsActive(false);
     }
 
 
   return (
-    <Container>
+    <GameContainer>
         <ButtonsContainer>
-            <Button 
+            <GameStateButton 
                 key='order-numbers-start'
                 id='order-numbers-start'
                 variant="outlined" 
@@ -148,8 +157,8 @@ export default function GroupSizesColors() {
                 disabled={gameStarted}
             >
                 Start Game
-            </Button>
-            <Button 
+            </GameStateButton>
+            <GameStateButton 
                 key='order-numbers-reset'
                 id='order-numbers-reset'
                 variant="outlined" 
@@ -157,13 +166,18 @@ export default function GroupSizesColors() {
                 onClick={()=>resetGame()}
                 disabled={!gameStarted}
             >
-                End Game
-            </Button>
-            <Typography>
-                Czas: {seconds} s.
-            </Typography> 
+                {gameFinished ? 'Reset Game' : 'End Game' }
+            </GameStateButton>
+            <Timer>
+                <Typography>
+                    Time:
+                </Typography> 
+                <Typography>
+                    {seconds} s.
+                </Typography> 
+            </Timer>
         </ButtonsContainer>
         {theGame()}        
-    </Container>
+    </GameContainer>
   );
 }

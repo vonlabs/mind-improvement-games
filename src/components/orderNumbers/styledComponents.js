@@ -1,4 +1,4 @@
-import styled, { css }  from 'styled-components';
+import styled  from 'styled-components';
 
 export const GameRow = styled.div`
       display: flex;
@@ -12,12 +12,14 @@ export const GameTable = styled.div`
       align-items: center;
 `;
 
-export const Container = styled.div`
+export const GameContainer = styled.div`
       display: flex;
       flex-direction: column;
+      max-width: 430px;
       width: 100%;
-      height: 100%;
-      justify-content: center;
+      height: 460px;
+
+      margin: auto;
 `;
 
 export const ButtonsContainer = styled.div`
@@ -26,7 +28,6 @@ export const ButtonsContainer = styled.div`
       width: 100%;
       height: 80px;
 `;
-
 
 export const Button = styled.button`
       align-items:center;

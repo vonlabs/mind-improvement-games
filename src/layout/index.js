@@ -4,7 +4,7 @@ import {Container, GameButton, Title, ButtonsContainer, FAB} from './styledCompo
 
 
 export default function Layout(props) {
-  const [game, setGame] = useState(0);
+  const [game, setGame] = useState(1);
   return (
     <Container>
          {  
@@ -34,6 +34,7 @@ export default function Layout(props) {
         <div className='gameContainer'>
         {props.games.map((elem, index) => {
             if(game === index) return elem.game
+            return null
         })}
         </div>
     </Container>
